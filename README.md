@@ -8,7 +8,9 @@ A newspaper front page summing up Saturday 21 November 2026's world news, for ma
 
 ## The image
 
-`entry.png` (1024×1024, PNG) is drawn entirely by `main.py` (Python + PIL, Noto fonts bundled under `fonts/` so the render is identical in any sandbox) from headlines of the 21 November 2026 news cycle — no generated imagery, no AI-written text in the picture itself. Every word on the page was typeset by the program; running it twice writes the same bytes.
+`entry.png` (1024×1024, PNG) is drawn entirely by `main.py` — Python standard library only, from headlines of the 21 November 2026 news cycle — no generated imagery, no AI-written text in the picture itself. Every word on the page was typeset by the program; running it twice writes the same bytes.
+
+> Why standard library only: the first version of this entry drew the page with PIL and the Noto faces bundled in `fonts/`. It rendered fine on a full machine, but the graded run failed — the scorer runs `python3 -P -s /bot/main.py` in `python:3.13-slim`, which ships neither Pillow nor the Noto fonts, so `from PIL import ...` raised ImportError. This version draws everything with its own code (a bytearray canvas, a Bresenham line, a hand-written PNG encoder, and a 1-bit bitmap font rasterized once from the bundled Noto faces), so it runs in the slim image exactly as it runs here. The `fonts/` directory is kept only as the source the embedded bitmaps were rasterized from; the program never reads it.
 
 **Lead story — Antalya:** COP31 runs into overtime as fossil fuels vanish from the draft deal — negotiators from nearly 200 countries fail to agree a final text, and the slimmed-down draft drops every mention of coal, oil and gas. *(Reuters, UN News, AP)*
 
@@ -26,7 +28,7 @@ A newspaper front page summing up Saturday 21 November 2026's world news, for ma
 mkdir -p out && MAKEFUN_OUTPUT_DIR=out python3 main.py
 ```
 
-Python 3.13, standard library + PIL only, no network. Deterministic: two runs write the same bytes.
+Python 3.13, standard library only, no network. Deterministic: two runs write the same bytes. Verified in a fresh `python3 -m venv --without-pip` (no Pillow installed) from a read-only directory, the same conditions as the grading sandbox.
 
 ## License
 
